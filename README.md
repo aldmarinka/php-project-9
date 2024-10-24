@@ -1,6 +1,6 @@
 ## Анализатор страниц
 
-[Page Analyzer](https://) – сайт, который анализирует указанные страницы на SEO пригодность по аналогии с [PageSpeed Insights](https://pagespeed.web.dev/)
+[Page Analyzer](https://php-project-9-hivi.onrender.com/) – сайт, который анализирует указанные страницы на SEO пригодность по аналогии с [PageSpeed Insights](https://pagespeed.web.dev/)
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/aldmarinka/php-project-9/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/aldmarinka/php-project-9/actions)
