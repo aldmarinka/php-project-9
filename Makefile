@@ -7,6 +7,3 @@ start:
 
 lint:
 	composer exec --verbose phpcs -- --standard=PSR12 public
-
-test-coverage:
-	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-clover logs/clover.xml
