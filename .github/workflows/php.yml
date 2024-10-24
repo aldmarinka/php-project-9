@@ -1,0 +1,40 @@
+name: PHP Composer
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+          php-version: '8.2'
+          extensions: xdebug
+          
+    - name: install project
+      run: make install
+      
+    - name: run linter
+      run: make lint
+
+    - name: Upload Coverage to Code Climate
+      uses: paambaati/codeclimate-action@v5
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageCommand: make test-coverage
+        coverageLocations: ${{ github.workspace }}/logs/clover.xml:clover
+        debug: true
+          
