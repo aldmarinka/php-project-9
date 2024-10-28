@@ -2,4 +2,20 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-echo "Hello";
+use Slim\Factory\AppFactory;
+use DI\Container;
+
+$app = AppFactory::create();
+$app->addErrorMiddleware(true, true, true);
+
+$container = new Container();
+$container->set('renderer', function () {
+    return new \Slim\Views\PhpRenderer(__DIR__ . '/../templates');
+});
+$app = AppFactory::createFromContainer($container);
+
+$app->get('/', function ($request, $response) {
+    return $this->get('renderer')->render($response, 'main.phtml');
+});
+
+$app->run();
