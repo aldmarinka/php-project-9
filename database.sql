@@ -1,13 +1,10 @@
-DROP TABLE IF EXISTS urls;
-DROP TABLE IF EXISTS checks;
-
-CREATE TABLE urls (
+CREATE TABLE IF NOT EXISTS urls (
                       id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                       name varchar(255),
                       created_at timestamp
 );
 
-CREATE TABLE checks (
+CREATE TABLE IF NOT EXISTS checks (
                         id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                         url_id bigint REFERENCES urls (id),
                         status_code smallint,
