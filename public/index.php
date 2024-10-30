@@ -45,11 +45,25 @@ $app->get('/', function ($request, $response) {
 
 $app->post('/urls', function (Request $request, Response $response) {
     $parsedBody = $request->getParsedBody();
-    $dataUrl = $parsedBody['url'] ?? null;
-    $name = $dataUrl['name'] ?? '';
+
+    // Проверка, является ли $parsedBody массивом или объектом, и наличие 'url'
+    $dataUrl = null;
+    if (is_array($parsedBody) && isset($parsedBody['url'])) {
+        $dataUrl = $parsedBody['url'];
+    } elseif (is_object($parsedBody) && isset($parsedBody->url)) {
+        $dataUrl = $parsedBody->url;
+    }
 
     $validator = new UrlValidator();
     $errors    = $validator->validate($dataUrl);
+
+    // Получение 'name' из $dataUrl
+    $name = '';
+    if (is_array($dataUrl) && isset($dataUrl['name'])) {
+        $name = $dataUrl['name'];
+    } elseif (is_object($dataUrl) && isset($dataUrl->name)) {
+        $name = $dataUrl->name;
+    }
 
     if (count($errors) === 0) {
         $len  = strlen($name);
@@ -75,7 +89,7 @@ $app->post('/urls', function (Request $request, Response $response) {
     }
 
     $params = [
-        'name' => $url['name'] ?? '',
+        'name' => $name,
         'errors' => $errors[0]
     ];
 

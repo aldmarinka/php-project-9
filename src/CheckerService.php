@@ -77,7 +77,7 @@ class CheckerService
                 continue;
             }
 
-            $meta[$tagName] = strip_tags((string)$dom->first($schema));
+            $meta[$tagName] = $dom->first($schema);
         }
 
         return $meta;
