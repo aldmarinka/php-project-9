@@ -9,6 +9,7 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
+use Hexlet\Code\CheckHandler;
 use Hexlet\Code\Connection;
 use Hexlet\Code\UrlsHandler;
 use Hexlet\Code\UrlValidator;
@@ -87,10 +88,13 @@ $app->get('/urls', function ($request, $response) {
 })->setName('urls.index');
 
 $app->get('/urls/{id}', function ($request, $response, array $args) {
-    $dbh = new UrlsHandler(Connection::get()->connect());
+    $connection = Connection::get()->connect();
+    $dbUrls = new UrlsHandler($connection);
+    $dbCheck = new CheckHandler($connection);
 
     $id = $args['id'];
-    $params['url'] = $dbh->get($id);
+    $params['url'] = $dbUrls->get($id);
+    $params['checks'] = $dbCheck->getByUrl($id);
     $flash = $this->get('flash')->getMessages();
 
     if (!empty($flash)) {
@@ -99,5 +103,19 @@ $app->get('/urls/{id}', function ($request, $response, array $args) {
 
     return $this->get('renderer')->render($response, 'urls.show.phtml', $params);
 })->setName('urls.show');
+
+$app->post('/urls/{url_id}/checks', function ($request, $response, array $args) use ($router) {
+    $dbh = new CheckHandler(Connection::get()->connect());
+
+    $url_id = $args['url_id'];
+    $dbh->add($url_id);
+
+    $routeParser = RouteContext::fromRequest($request)->getRouteParser();
+    $url         = $routeParser->urlFor('urls.show', ['id' => $url_id]);
+
+    return $response
+        ->withHeader('Location', $url)
+        ->withStatus(302);
+})->setName('urls.checks');
 
 $app->run();
