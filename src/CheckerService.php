@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hexlet\Code;
 
+use DiDom\Document;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -21,10 +22,10 @@ class CheckerService
         try {
             $response = $client->request('GET', $url, ['http_errors' => true]);
 
-            return [
+            $status = [
                 'type'    => 'success',
                 'message' => 'Успешно',
-                'code'    => $response->getStatusCode()
+                'code'    => $response->getStatusCode(),
             ];
         } catch (ConnectException) {
             return [
@@ -38,15 +39,44 @@ class CheckerService
                 return [
                     'type'    => 'error',
                     'message' => "При проверке возникла ошибка: {$error->getMessage()}",
-                    'code'    => $response->getStatusCode()
+                    'code'    => $response->getStatusCode(),
                 ];
             }
 
-            return [
+            $status = [
                 'type'    => 'warning',
                 'message' => 'Страница была проверена, но сервер отдавал ошибку',
-                'code'    => $response->getStatusCode()
+                'code'    => $response->getStatusCode(),
             ];
         }
+
+        $status['meta'] = $this->getMeta($response->getBody()->getContents());
+
+        return $status;
+    }
+
+    protected function getMeta(string $content): array
+    {
+        $dom  = new Document($content);
+        $tags = [
+            'h1'          => 'h1::text',
+            'title'       => 'title::text',
+            'description' => 'meta[name="description"]::attr(content)'
+        ];
+
+        $meta = [
+            'h1'          => '',
+            'title'       => '',
+            'description' => ''
+        ];
+        foreach ($tags as $tagName => $schema) {
+            if (!$dom->has($schema)) {
+                continue;
+            }
+
+            $meta[$tagName] = strip_tags($dom->first($schema));
+        }
+
+        return $meta;
     }
 }

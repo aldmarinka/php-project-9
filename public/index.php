@@ -117,8 +117,15 @@ $app->post('/urls/{url_id}/checks', function ($request, $response, array $args) 
     $url = $dbUrls->get($url_id);
     $check = $checker->checkUrl($url['name']);
 
+    $meta = $check['meta'];
     if (array_key_exists('code', $check)) {
-        $dbCheck->add($url_id, $check['code']);
+        $dbCheck->add(
+            $url_id,
+            $check['code'],
+            $meta['h1'],
+            $meta['title'],
+            $meta['description']
+        );
     }
 
     $this->get('flash')->addMessage($check['type'], $check['message']);

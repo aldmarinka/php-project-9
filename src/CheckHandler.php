@@ -27,19 +27,26 @@ class CheckHandler
     }
 
     /**
-     * @param int $url_id
+     * @param int    $url_id
+     * @param int    $code
+     * @param string $h1
+     * @param string $title
+     * @param string $description
      *
      * @return void
      */
-    public function add(int $url_id, int $code): void
+    public function add(int $url_id, int $code, string $h1, string $title, string $description): void
     {
-        $query = "INSERT INTO checks (url_id, status_code, created_at) 
-            VALUES (:url_id, :code, :created_at)";
+        $query = "INSERT INTO checks (url_id, status_code, h1, title, description, created_at) 
+            VALUES (:url_id, :code, :h1, :title, :description, :created_at)";
         $created_at = Carbon::now();
 
         $statement = $this->pdo->prepare($query);
         $statement->bindValue(':url_id', $url_id);
         $statement->bindValue(':code', $code);
+        $statement->bindValue(':h1', $h1);
+        $statement->bindValue(':title', $title);
+        $statement->bindValue(':description', $description);
         $statement->bindValue(':created_at', $created_at);
         $statement->execute();
     }
