@@ -37,19 +37,23 @@ $container->set('flash', function () {
 
 
 $app = AppFactory::createFromContainer($container);
-$router = $app->getRouteCollector()->getRouteParser();
 $app->addErrorMiddleware(true, true, true);
 
 $app->get('/', function ($request, $response) {
     return $this->get('renderer')->render($response, 'main.phtml');
 })->setName('main.index');
 
-$app->post('/urls', function (Request $request, Response $response) use ($router) {
+$app->post('/urls', function (Request $request, Response $response) {
     $parsedBody = $request->getParsedBody();
-    $url = $parsedBody['url'];
 
-    $validator = new UrlValidator();
-    $errors = $validator->validate($url);
+    if (array_key_exists('url', $parsedBody)) {
+        $url = $parsedBody['url'];
+
+        $validator = new UrlValidator();
+        $errors    = $validator->validate($url);
+    } {
+        $errors[] = "URL не должен быть пустым";
+    }
 
     if (count($errors) === 0) {
         $name = $url['name'];
@@ -76,8 +80,8 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
     }
 
     $params = [
-        'name' => $url['name'],
-        'errors' => is_array($errors) ? $errors[0] : 'Непредвиденная ошибка'
+        'name' => $url['name'] ?? '',
+        'errors' => $errors[0]
     ];
 
     return $this->get('renderer')->render($response->withStatus(422), 'main.phtml', $params);
@@ -107,7 +111,7 @@ $app->get('/urls/{id}', function ($request, $response, array $args) {
     return $this->get('renderer')->render($response, 'urls.show.phtml', $params);
 })->setName('urls.show');
 
-$app->post('/urls/{url_id}/checks', function ($request, $response, array $args) use ($router) {
+$app->post('/urls/{url_id}/checks', function ($request, $response, array $args) {
     $connection = Connection::get()->connect();
     $dbUrls = new UrlsHandler($connection);
     $dbCheck = new CheckHandler($connection);

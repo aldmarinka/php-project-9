@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hexlet\Code;
 
 use DiDom\Document;
+use DiDom\Exceptions\InvalidSelectorException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -38,8 +39,7 @@ class CheckerService
             if (empty($response)) {
                 return [
                     'type'    => 'error',
-                    'message' => "При проверке возникла ошибка: {$error->getMessage()}",
-                    'code'    => $response->getStatusCode(),
+                    'message' => "При проверке возникла ошибка: {$error->getMessage()}"
                 ];
             }
 
@@ -55,6 +55,9 @@ class CheckerService
         return $status;
     }
 
+    /**
+     * @throws InvalidSelectorException
+     */
     protected function getMeta(string $content): array
     {
         $dom  = new Document($content);
@@ -74,7 +77,7 @@ class CheckerService
                 continue;
             }
 
-            $meta[$tagName] = strip_tags($dom->first($schema));
+            $meta[$tagName] = strip_tags((string)$dom->first($schema));
         }
 
         return $meta;
