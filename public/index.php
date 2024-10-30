@@ -9,10 +9,13 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
+use GuzzleHttp\Client;
+use Hexlet\Code\CheckerService;
 use Hexlet\Code\CheckHandler;
 use Hexlet\Code\Connection;
 use Hexlet\Code\UrlsHandler;
 use Hexlet\Code\UrlValidator;
+
 use Slim\Factory\AppFactory;
 use DI\Container;
 use Slim\Flash\Messages;
@@ -105,10 +108,20 @@ $app->get('/urls/{id}', function ($request, $response, array $args) {
 })->setName('urls.show');
 
 $app->post('/urls/{url_id}/checks', function ($request, $response, array $args) use ($router) {
-    $dbh = new CheckHandler(Connection::get()->connect());
+    $connection = Connection::get()->connect();
+    $dbUrls = new UrlsHandler($connection);
+    $dbCheck = new CheckHandler($connection);
+    $checker = new CheckerService(new Client());
 
     $url_id = $args['url_id'];
-    $dbh->add($url_id);
+    $url = $dbUrls->get($url_id);
+    $check = $checker->checkUrl($url['name']);
+
+    if (array_key_exists('code', $check)) {
+        $dbCheck->add($url_id, $check['code']);
+    }
+
+    $this->get('flash')->addMessage($check['type'], $check['message']);
 
     $routeParser = RouteContext::fromRequest($request)->getRouteParser();
     $url         = $routeParser->urlFor('urls.show', ['id' => $url_id]);
