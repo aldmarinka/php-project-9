@@ -11,7 +11,7 @@ class UrlValidator
         $errors = [];
         $url = $data['name'] ?? null;
         if (!$url) {
-            $errors[] = "Не введен url";
+            $errors[] = "URL не должен быть пустым";
             return $errors;
         }
 
@@ -20,7 +20,7 @@ class UrlValidator
         }
         $parsedUrl = parse_url($url);
         if (!isset($parsedUrl['scheme']) || ($parsedUrl['scheme'] != "http" && $parsedUrl['scheme'] != "https")) {
-            $errors[] = "Некорректный адрес сайта";
+            $errors[] = "Некорректный URL";
         }
         return $errors;
     }

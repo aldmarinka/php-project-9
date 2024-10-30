@@ -61,7 +61,7 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
         if (empty($oldUrl)) {
             $dbh->add($name);
             $id = $dbh->getByName($name)['id'];
-            $this->get('flash')->addMessage('success', 'Страница добавлена');
+            $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
         } else {
             $id = $oldUrl['id'];
             $this->get('flash')->addMessage('success', 'Страница уже существует');

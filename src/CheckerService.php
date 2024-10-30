@@ -24,7 +24,7 @@ class CheckerService
 
             $status = [
                 'type'    => 'success',
-                'message' => 'Страница успешно добавлена',
+                'message' => 'Страница успешно проверена',
                 'code'    => $response->getStatusCode(),
             ];
         } catch (ConnectException) {
