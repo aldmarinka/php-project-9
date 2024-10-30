@@ -84,7 +84,7 @@ $app->post('/urls', function (Request $request, Response $response) use ($router
 })->setName('urls.store');
 
 $app->get('/urls', function ($request, $response) {
-    $dbh = new UrlsHandler(Connection::get()->connect());
+    $dbh = new CheckHandler(Connection::get()->connect());
     $params['table'] = $dbh->getList();
 
     return $this->get('renderer')->render($response, 'urls.index.phtml', $params);

@@ -50,4 +50,39 @@ class CheckHandler
         $statement->bindValue(':created_at', $created_at);
         $statement->execute();
     }
+
+    /**
+     * @return array
+     */
+    public function getList(): array
+    {
+        $query = "SELECT 
+                u.id,
+                u.name,
+                c.status_code,
+                c.created_at AS last_opened_at
+            FROM 
+                urls u
+            LEFT JOIN 
+                (SELECT 
+                     url_id,
+                     status_code,
+                     created_at
+                 FROM 
+                     checks
+                 WHERE 
+                     (url_id, created_at) IN (
+                         SELECT url_id, MAX(created_at)
+                         FROM checks
+                         GROUP BY url_id
+                     )
+                ) AS c ON u.id = c.url_id
+            ORDER BY u.id
+            ";
+
+        $statement = $this->pdo->prepare($query);
+        $statement->execute();
+
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

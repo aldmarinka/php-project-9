@@ -45,7 +45,7 @@ class CheckerService
 
             $status = [
                 'type'    => 'warning',
-                'message' => 'Страница была проверена, но сервер отдавал ошибку',
+                'message' => 'Страница была проверена, но сервер отдал ошибку',
                 'code'    => $response->getStatusCode(),
             ];
         }
