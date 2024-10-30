@@ -45,18 +45,13 @@ $app->get('/', function ($request, $response) {
 
 $app->post('/urls', function (Request $request, Response $response) {
     $parsedBody = $request->getParsedBody();
+    $dataUrl = $parsedBody['url'] ?? null;
+    $name = $dataUrl['name'] ?? '';
 
-    if (array_key_exists('url', $parsedBody)) {
-        $url = $parsedBody['url'];
-
-        $validator = new UrlValidator();
-        $errors    = $validator->validate($url);
-    } {
-        $errors[] = "URL не должен быть пустым";
-    }
+    $validator = new UrlValidator();
+    $errors    = $validator->validate($dataUrl);
 
     if (count($errors) === 0) {
-        $name = $url['name'];
         $len  = strlen($name);
         $name = str_ends_with($name, '/') ? substr($name, 0, $len - 1) : $name;
 

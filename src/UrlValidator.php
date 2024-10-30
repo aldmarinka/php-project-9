@@ -6,10 +6,10 @@ namespace Hexlet\Code;
 
 class UrlValidator
 {
-    public function validate(array $data): array
+    public function validate(?array $dataUrl): array
     {
         $errors = [];
-        $url = $data['name'] ?? null;
+        $url = $dataUrl['name'] ?? null;
         if (!$url) {
             $errors[] = "URL не должен быть пустым";
             return $errors;
