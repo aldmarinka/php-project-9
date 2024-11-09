@@ -83,7 +83,7 @@ $app->post('/urls', function (Request $request, Response $response) {
     if (count($errors) === 0) {
         $parsedUrl = parse_url($name);
         $name = "{$parsedUrl['scheme']}://{$parsedUrl['host']}";
-        if (key_exists('path', $parsedUrl) && $parsedUrl['path'] !== '/' ){
+        if (key_exists('path', $parsedUrl) && $parsedUrl['path'] !== '/') {
             $name .= $parsedUrl['path'];
         }
 
