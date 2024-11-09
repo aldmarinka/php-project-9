@@ -32,16 +32,6 @@ class UrlsHandler
     }
 
     /**
-     * @return array
-     */
-    public function getList(): array
-    {
-        $query = "SELECT * FROM urls ORDER BY created_at";
-
-        return $this->pdo->query($query, \PDO::FETCH_ASSOC)->fetchAll();
-    }
-
-    /**
      * @param int $id
      *
      * @return array
