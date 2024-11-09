@@ -82,7 +82,8 @@ $app->post('/urls', function (Request $request, Response $response) {
 
     if (count($errors) === 0) {
         $parsedUrl = parse_url($name);
-        $name = "{$parsedUrl['scheme']}://{$parsedUrl['host']}{$parsedUrl['path']}";
+        $name = "{$parsedUrl['scheme']}://{$parsedUrl['host']}";
+        $name .= $parsedUrl['path'] ?: '';
 
         $dbh    = new UrlsHandler($this->get('connection'));
         $oldUrl = $dbh->getByName($name);
