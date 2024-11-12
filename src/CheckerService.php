@@ -37,10 +37,7 @@ class CheckerService
             $response = $error->getResponse();
 
             if (empty($response)) {
-                return [
-                    'type'    => 'error',
-                    'message' => "При проверке возникла ошибка: {$error->getMessage()}"
-                ];
+                throw $error;
             }
 
             $status = [
